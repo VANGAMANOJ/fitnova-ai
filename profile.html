@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fitnova AI  Profile & Nutrition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body class="profile-pg">
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="{{ url_for('static', filename='fitnova_logo.png') }}" alt="Fitnova AI" class="nav-logo" id="navLogo"/>
+  </div>
+  <div class="nav-tabs">
+    <a href="/?tab=trainer"   class="nav-tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg> Live Trainer</a>
+    <a href="/?tab=dailyplan" class="nav-tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Daily Plan</a>
+    <a href="/?tab=dashboard" class="nav-tab"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg> Dashboard</a>
+    <a href="/profile"        class="nav-tab active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Profile</a>
+  </div>
+  <div class="nav-right">
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark mode">
+      <span id="darkIcon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span> Dark</span>
+    </button>
+  </div>
+</nav>
+
+<div class="prof-layout">
+
+  <!--  FORM  -->
+  <div class="prof-form-wrap">
+    <div class="prof-form-card">
+      <h1 class="prof-title">Your Profile</h1>
+      <p class="prof-sub">Personalize your AI fitness experience</p>
+
+      <form id="profileForm" onsubmit="saveProfile(event)">
+        <div class="fsec-title">Personal Information</div>
+        <div class="frow">
+          <div class="fgroup"><label>Full Name</label><input type="text"   id="fName"   placeholder="Your name" required/></div>
+          <div class="fgroup"><label>Age</label>      <input type="number" id="fAge"    placeholder="25" min="10" max="100" required/></div>
+        </div>
+        <div class="frow">
+          <div class="fgroup"><label>Height (cm)</label><input type="number" id="fHeight" placeholder="170" min="100" max="250" required/></div>
+          <div class="fgroup"><label>Weight (kg)</label><input type="number" id="fWeight" placeholder="70"  min="30"  max="300" step="0.1" required/></div>
+        </div>
+        <div class="fgroup">
+          <label>Gender</label>
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="gender" value="male"   checked/> Male</label>
+            <label class="radio-opt"><input type="radio" name="gender" value="female"/>          Female</label>
+            <label class="radio-opt"><input type="radio" name="gender" value="other"/>           Other</label>
+          </div>
+        </div>
+
+
+        <div class="fgroup">
+          <label>Diet Preference</label>
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="diet" value="vegetarian" checked/>
+              <span class="diet-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 22V12M2 12c0 5.5 4.5 10 10 10S22 17.5 22 12"/><path d="M2 7c2-4 6-6 10-5 4 1 6 4 6 4"/><path d="M12 12C10 9 9 6 12 2"/></svg></span> Vegetarian</label>
+            <label class="radio-opt"><input type="radio" name="diet" value="non_vegetarian"/>
+              <span class="diet-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M4.93 4.93c1.17-1.17 2.7-1.8 4.32-1.8 3.38 0 6.12 2.74 6.12 6.12 0 1.62-.63 3.15-1.8 4.32L4.93 22H2v-2.93L4.93 4.93z"/><path d="M14 10l7-7"/></svg></span> Non-Vegetarian</label>
+            <label class="radio-opt"><input type="radio" name="diet" value="vegan"/>
+              <span class="diet-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M7 8h10M7 12h4M7 16h2"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></span> Vegan</label>
+          </div>
+        </div>
+
+        <div class="fsec-title">Fitness Goal</div>
+        <!-- Scrollable multi-select list showing all 26 goals -->
+        <div class="fgroup">
+          <label>Select your goal</label>
+          <select id="fGoal" size="8">
+            <option value="weight_loss"          selected>Weight Loss</option>
+            <option value="muscle_gain"                  >Muscle Gain</option>
+            <option value="body_recomposition"           > Body Recomposition</option>
+            <option value="general_fitness"              >General Fitness</option>
+            <option value="strength_training"            > Strength Training</option>
+            <option value="endurance_training"           >Endurance Training</option>
+            <option value="fat_loss"                     >Fat Loss</option>
+            <option value="athletic_performance"         >Athletic Performance</option>
+            <option value="flexibility_mobility"         >Flexibility &amp; Mobility</option>
+            <option value="posture_improvement"          >Posture Improvement</option>
+            <option value="rehabilitation"               >Rehabilitation / Injury Recovery</option>
+            <option value="core_strength"                >Core Strength</option>
+            <option value="lean_muscle"                  >Lean Muscle Building</option>
+            <option value="cardio_fitness"               > Cardio Fitness</option>
+            <option value="functional_fitness"           >Functional Fitness</option>
+            <option value="calisthenics"                 >Calisthenics Training</option>
+            <option value="body_toning"                  >Body Toning</option>
+            <option value="stamina"                      >Stamina Improvement</option>
+            <option value="hiit"                         >HIIT Conditioning</option>
+            <option value="speed_agility"                >Speed &amp; Agility</option>
+            <option value="balance_stability"            >Balance &amp; Stability</option>
+            <option value="sports_performance"           >Sports Performance</option>
+            <option value="beginner_fitness"             >Beginner Fitness</option>
+            <option value="advanced_training"            >Advanced Training</option>
+            <option value="senior_fitness"               >Senior Fitness</option>
+            <option value="home_workout"                 >Home Workout Training</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" id="saveBtn">Save &amp; Generate Plan</button>
+      </form>
+    </div>
+  </div>
+
+  <!--  RESULTS  -->
+  <div class="prof-results" id="profResults" style="display:none">
+
+    <!-- Protein card + PDF button -->
+    <div class="res-card">
+      <div class="rc-hdr">
+        <span class="rc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg></span>
+        <div><div class="rc-title">Daily Protein Target</div><div class="rc-sub" id="goalLabel">—</div></div>
+        <button class="pdf-btn" id="pdfBtn" onclick="downloadPDF()"> Download Nutrition PDF</button>
+      </div>
+      <div class="prot-range" id="protRange">—</div>
+      <div class="prot-note-sm">Based on 1.6  2.2 g per kg body weight</div>
+      <div class="prot-bar-wrap"><div class="prot-bar-fill" style="width:65%"></div></div>
+    </div>
+
+    <!-- Meal plan -->
+    <div class="res-card">
+      <div class="rc-hdr"><span class="rc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h4l1-1z"/></svg></span><div class="rc-title">Daily Meal Plan</div></div>
+      <div id="mealList"></div>
+    </div>
+
+    <!-- Download Nutrition Plan PDF button (below diet/nutrition info) -->
+    <div class="res-card" id="nutritionPdfCard">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Personal Nutrition Plan</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px;">Download your personalized nutrition plan as a PDF</div>
+        </div>
+        <button class="btn-nutrition-pdf" id="nutritionPdfBtn" onclick="downloadNutritionPDF()">
+           Download Nutrition Plan PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Workout plan -->
+    <div class="res-card">
+      <div class="rc-hdr"><span class="rc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4"/></svg></span><div class="rc-title">Your Daily Workout Plan</div></div>
+      <div id="workoutPlanList"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="res-card">
+      <div class="rc-hdr"><span class="rc-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><polyline points="20 6 9 17 4 12"/></svg></span><div class="rc-title">Recommended Exercises</div></div>
+      <div class="chips" id="recChips"></div>
+    </div>
+
+    <!-- Protein foods -->
+    <div class="res-card">
+      <div class="rc-hdr"><span class="rc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72M10.48 14.93c1.27-2.68 4.07-3.77 5.86-5.72"/></svg></span><div class="rc-title">Best Protein Foods</div></div>
+      <div class="food-grid" id="foodGrid"></div>
+    </div>
+
+    <!-- Workout history -->
+    <div class="res-card">
+      <div class="rc-hdr"><span class="rc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><div class="rc-title">Workout Progress &amp; History</div></div>
+      <div id="histContent"><div class="no-hist">Complete workouts in the Live Trainer to see history here.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+//  Dark mode (shared helper) 
+function applyDark(dark) {
+  document.body.classList.toggle('dark', dark);
+  const icon = document.getElementById('darkIcon');
+  const btn  = document.getElementById('darkToggle');
+  if (dark) { icon.textContent=''; btn.querySelector('span:last-child').textContent=' Light'; }
+  else       { icon.textContent=''; btn.querySelector('span:last-child').textContent=' Dark'; }
+}
+function toggleDark() {
+  const dark = !document.body.classList.contains('dark');
+  localStorage.setItem('fitai_dark', dark ? '1' : '0');
+  applyDark(dark);
+}
+const _savedTheme = localStorage.getItem('fitai_dark');
+if (_savedTheme !== null) { applyDark(_savedTheme === '1'); }
+
+//  Food emoji map 
+const FE = {
+  'Chicken Breast':'','Chicken breast':'','Fish':'','Eggs':'',
+  'Egg whites':'','Oats':'','Greek Yogurt':'','Paneer':'',
+  'Milk':'','Peanut Butter':'','Tofu':'','Lentils':'','Vegetables':'',
+  'Banana':'','Dates':'','Rice':'','Beef/Chicken':'🥩','Nuts':'',
+};
+
+let profile = null;
+
+//  Save profile 
+async function saveProfile(e) {
+  e.preventDefault();
+  profile = {
+    name:         document.getElementById('fName').value,
+    age:          document.getElementById('fAge').value,
+    height:       document.getElementById('fHeight').value,
+    weight:       document.getElementById('fWeight').value,
+    gender:       document.querySelector('input[name="gender"]:checked').value,
+    fitness_goal: document.getElementById('fGoal').value,
+    diet: document.querySelector('input[name="diet"]:checked')?.value || 'vegetarian',
+  };
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  // Save to localStorage for offline persistence
+  localStorage.setItem('fn_profile', JSON.stringify(profile));
+  try {
+    const res = await fetch('/api/save_profile', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(profile),
+    });
+    const d = await res.json();
+    renderResults(d.diet, d.recommendations, d.plan);
+    btn.textContent = ' Saved!';
+    setTimeout(() => { btn.textContent = 'Save & Generate Plan ✨'; btn.disabled = false; }, 2500);
+  } catch(err) {
+    btn.textContent = 'Save & Generate Plan ✨'; btn.disabled = false;
+    alert('Error saving profile: ' + err.message);
+  }
+}
+
+//  Render results 
+function renderResults(diet, recs, plan) {
+  document.getElementById('profResults').style.display = 'flex';
+  document.getElementById('goalLabel').textContent  = diet.goal;
+  document.getElementById('protRange').textContent  = diet.protein_range;
+
+  // Meal plan
+  const m = diet.meals;
+  document.getElementById('mealList').innerHTML = [
+    ['Breakfast', m.breakfast], ['Lunch', m.lunch],
+    ['Snack', m.snack],         ['Dinner', m.dinner],
+    ['Before Bed', m.pre_bed],
+  ].map(([t,c]) => `
+    <div class="meal-row">
+      <span class="meal-time">${t}</span>
+      <span class="meal-cont">${c}</span>
+    </div>`).join('');
+
+  // Workout plan
+  if (plan) {
+    document.getElementById('workoutPlanList').innerHTML =
+      plan.workout.map(ex => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;
+             background:var(--surface2);border-radius:8px;margin-bottom:6px">
+          <span style="font-size:18px">💪</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${ex.name}</div>
+            <div style="font-size:11.5px;color:var(--text3)">${ex.sets} sets × ${ex.reps} · Rest ${ex.rest||'30s'}</div>
+          </div>
+        </div>`).join('');
+  }
+
+  // Exercise chips
+  document.getElementById('recChips').innerHTML = recs.map(r =>
+    `<span class="chip">${r}</span>`).join('');
+
+  // Protein foods
+  document.getElementById('foodGrid').innerHTML = m.foods.map(f =>
+    `<div class="food-pill">${FE[f]||'🥗'} ${f}</div>`).join('');
+
+  loadHistory();
+}
+
+//  Workout history 
+async function loadHistory() {
+  try {
+    const d = await (await fetch('/api/workout_history')).json();
+    if (!d.history.length) return;
+    document.getElementById('histContent').innerHTML = d.history.map(h => {
+      const ex  = h.exercise.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+      const col = h.accuracy>75?'var(--green)':h.accuracy>40?'var(--orange)':'var(--red)';
+      return `<div class="hist-item">
+        <div class="hi-name">${ex}</div>
+        <div class="hi-row">
+          <span>${h.reps} reps</span>
+          <span style="color:${col};font-weight:700">${h.accuracy}% accuracy</span>
+        </div>
+        ${h.mistakes.length?`<div class="hi-mistakes">${h.mistakes.join(' · ')}</div>`:''}
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+//  Nutrition Plan PDF download (spec endpoint: /download-nutrition-pdf) 
+async function downloadNutritionPDF() {
+  if (!profile) { alert('Please save your profile first.'); return; }
+  const btn = document.getElementById('nutritionPdfBtn');
+  btn.textContent = ' Generating…'; btn.disabled = true;
+  try {
+    const res = await fetch('/download-nutrition-pdf', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(profile),
+    });
+    if (!res.ok) { const e=await res.json(); throw new Error(e.error||'Server error'); }
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'nutrition_plan.pdf';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    btn.textContent = ' Downloaded!';
+    setTimeout(() => { btn.textContent = ' Download Nutrition Plan PDF'; btn.disabled = false; }, 2500);
+  } catch(err) {
+    btn.textContent = ' Download Nutrition Plan PDF'; btn.disabled = false;
+    alert('PDF error: ' + err.message);
+  }
+}
+
+//  PDF download 
+async function downloadPDF() {
+  if (!profile) { alert('Please save your profile first.'); return; }
+  const btn = document.getElementById('pdfBtn');
+  btn.textContent = ' Generating…'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/download_nutrition_pdf', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(profile),
+    });
+    if (!res.ok) { const e=await res.json(); throw new Error(e.error||'Server error'); }
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'nutrition_plan.pdf';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    btn.textContent = ' Downloaded!';
+    setTimeout(() => { btn.textContent = ' Download Nutrition PDF'; btn.disabled = false; }, 2500);
+  } catch(err) {
+    btn.textContent = ' Download Nutrition PDF'; btn.disabled = false;
+    alert('PDF error: ' + err.message);
+  }
+}
+
+//  Auto-load saved profile on page open 
+(async () => {
+  try {
+    const d = await (await fetch('/api/get_profile')).json();
+    if (!d.profile) {
+      // Fallback to localStorage
+      const saved = localStorage.getItem('fn_profile');
+      if (saved) {
+        profile = JSON.parse(saved);
+        document.getElementById('fName').value   = profile.name   || '';
+        document.getElementById('fAge').value    = profile.age    || '';
+        document.getElementById('fHeight').value = profile.height || '';
+        document.getElementById('fWeight').value = profile.weight || '';
+        const gr = document.querySelector('input[name="gender"][value="' + profile.gender + '"]');
+        if (gr) gr.checked = true;
+        if (profile.diet) {
+          const dr = document.querySelector('input[name="diet"][value="' + profile.diet + '"]');
+          if (dr) dr.checked = true;
+        }
+        if (profile.fitness_goal) document.getElementById('fGoal').value = profile.fitness_goal;
+      }
+      return;
+    }
+    profile = d.profile;
+    document.getElementById('fName').value   = profile.name   || '';
+    document.getElementById('fAge').value    = profile.age    || '';
+    document.getElementById('fHeight').value = profile.height || '';
+    document.getElementById('fWeight').value = profile.weight || '';
+    const gr = document.querySelector(`input[name="gender"][value="${profile.gender}"]`);
+    if (gr) gr.checked = true;
+    if (profile.fitness_goal) document.getElementById('fGoal').value = profile.fitness_goal;
+    if (profile.diet) {
+      const dr = document.querySelector('input[name="diet"][value="' + profile.diet + '"]');
+      if (dr) dr.checked = true;
+    }
+    renderResults(d.diet, d.recommendations, d.plan);
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

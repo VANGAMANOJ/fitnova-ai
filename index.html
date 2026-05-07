@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fitnova AI – AI Personal Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+
+<!-- ═════════════════ WELCOME / SPLASH PAGE ═══════════════════════════ -->
+<div id="welcomePage" class="welcome-overlay">
+  <div class="welcome-bg">
+    <div class="wb-orb wb-orb1"></div>
+    <div class="wb-orb wb-orb2"></div>
+    <div class="wb-orb wb-orb3"></div>
+    <div class="wb-grid"></div>
+  </div>
+  <div class="welcome-content">
+    <div class="wc-logo-wrap">
+      <img src="{{ url_for('static', filename='fitnova_logo.png') }}" alt="Fitnova AI" class="wc-logo" id="welcomeLogo"/>
+    </div>
+    <div class="wc-tagline">AI Powered. <span class="wc-accent">You Empowered.</span></div>
+    <p class="wc-desc">Your real-time AI personal trainer. No gym, no wearables — just your camera and your goals.</p>
+    <div class="wc-features">
+      <div class="wcf-item"><span class="wcf-svg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/><path d="M9 17h6"/></svg></span> Pose Detection</div>
+      <div class="wcf-item"><span class="wcf-svg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M2 12h20M2 8h4M6 12V8M10 12V6M14 12V8M18 12V6"/></svg></span> Form Analysis</div>
+      <div class="wcf-item"><span class="wcf-svg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg></span> Auto Rep Count</div>
+      <div class="wcf-item"><span class="wcf-svg"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span> Voice Coaching</div>
+    </div>
+    <button class="wc-cta" onclick="dismissWelcome()">
+      <span>Start Training</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="wc-insta">
+      <a href="https://www.instagram.com/fitnova_ai18?igsh=czBidTBoMGVxdXAw" target="_blank" rel="noopener" class="wc-insta-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="ig2" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f09433"/>
+            <stop offset="50%" stop-color="#dc2743"/>
+            <stop offset="100%" stop-color="#bc1888"/>
+          </linearGradient></defs>
+          <rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig2)" stroke-width="2"/>
+          <circle cx="12" cy="12" r="4" stroke="url(#ig2)" stroke-width="2"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="url(#ig2)"/>
+        </svg>
+        Follow @fitnova_ai18
+      </a>
+    </div>
+    <div class="wc-credit">Built by <strong>Vanga Manoj</strong> · Full Stack Web Developer</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ NAVBAR ══════════════════════════════════ -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="{{ url_for('static', filename='fitnova_logo.png') }}" alt="Fitnova AI" class="nav-logo" id="navLogo"/>
+  </div>
+
+  <!-- 4 fixed navigation tabs -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="trainer"   onclick="switchTab('trainer',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg> Live Trainer</button>
+    <button class="nav-tab"        data-tab="dailyplan" onclick="switchTab('dailyplan',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Daily Plan</button>
+    <button class="nav-tab"        data-tab="dashboard" onclick="switchTab('dashboard',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg> Dashboard</button>
+    <a href="/profile" class="nav-tab"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Profile</a>
+    <button class="nav-tab" data-tab="about" onclick="switchTab('about',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><line x1="12" y1="12" x2="12" y2="16"/></svg> About</button>
+  </div>
+
+  <div class="nav-right">
+    <!-- Status pill -->
+    <span class="nav-status-pill">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Ready</span>
+    </span>
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/fitnova_ai18?igsh=czBidTBoMGVxdXAw" target="_blank" rel="noopener" class="nav-insta" title="Follow @fitnova_ai18">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f09433"/>
+          <stop offset="25%" stop-color="#e6683c"/>
+          <stop offset="50%" stop-color="#dc2743"/>
+          <stop offset="75%" stop-color="#cc2366"/>
+          <stop offset="100%" stop-color="#bc1888"/>
+        </linearGradient></defs>
+        <rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig)" stroke-width="2"/>
+        <circle cx="12" cy="12" r="4" stroke="url(#ig)" stroke-width="2"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="url(#ig)"/>
+      </svg>
+      <span>@fitnova_ai18</span>
+    </a>
+    <!-- Dark / Light mode toggle -->
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDark()" title="Toggle dark mode">
+      <span id="darkIcon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><span> Dark</span>
+    </button>
+    <!-- 3-dot menu -->
+    <div class="dots-menu-wrap" id="dotsMenuWrap">
+      <button class="dots-btn" onclick="toggleDotsMenu()" title="More options" id="dotsBtn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="dots-dropdown" id="dotsDropdown">
+        <div class="dd-section-title">Navigate</div>
+        <button class="dd-item" onclick="switchTab('trainer',document.querySelector('[data-tab=trainer]'));closeDotsMenu()">Live Trainer</button>
+        <button class="dd-item" onclick="switchTab('dailyplan',document.querySelector('[data-tab=dailyplan]'));closeDotsMenu()">Daily Plan</button>
+        <button class="dd-item" onclick="switchTab('dashboard',document.querySelector('[data-tab=dashboard]'));closeDotsMenu()">Dashboard</button>
+        <a href="/profile" class="dd-item">Profile</a>
+        <div class="dd-divider"></div>
+        <div class="dd-section-title">Features</div>
+        <button class="dd-item" onclick="switchTab('trainer',document.querySelector('[data-tab=trainer]'));closeDotsMenu()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/><path d="M9 17h6"/></svg> AI Pose Detection</button>
+        <button class="dd-item" onclick="switchTab('dailyplan',document.querySelector('[data-tab=dailyplan]'));closeDotsMenu()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72M10.48 14.93c1.27-2.68 4.07-3.77 5.86-5.72"/></svg> Nutrition Plans</button>
+        <button class="dd-item" onclick="switchTab('dashboard',document.querySelector('[data-tab=dashboard]'));closeDotsMenu()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Progress Tracking</button>
+        <div class="dd-divider"></div>
+        <div class="dd-section-title">Exercises</div>
+        <button class="dd-item dd-small">Squat · Push-up · Bicep Curl</button>
+        <button class="dd-item dd-small">Lunge · Shoulder Press · Plank</button>
+        <button class="dd-item dd-small">Jumping Jacks · High Knees</button>
+        <div class="dd-divider"></div>
+        <div class="dd-section-title">About</div>
+        <button class="dd-item" onclick="switchTab('about',document.querySelector('[data-tab=about]'));closeDotsMenu()">ℹ About Fitnova AI</button>
+        <div class="dd-divider"></div>
+        <div class="dd-section-title">Connect</div>
+        <a href="https://www.instagram.com/fitnova_ai18?igsh=czBidTBoMGVxdXAw" target="_blank" class="dd-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg> @fitnova_ai18</a>
+        <a href="mailto:vangamanoj936@gmail.com" class="dd-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg> vangamanoj936@gmail.com</a>
+        <div class="dd-divider"></div>
+        <button class="dd-item" onclick="toggleDark();closeDotsMenu()"><span id="ddDarkIcon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span> Toggle Dark Mode</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═════════════════════ TAB: LIVE TRAINER ════════════════════════════ -->
+<div class="tab-content active" id="tab-trainer">
+  <div class="app-layout">
+
+    <!-- LEFT: Exercise list -->
+    <aside class="panel panel-left">
+      <div class="panel-header">
+        <h2>Exercises</h2><span class="panel-sub">Tap to select</span>
+      </div>
+      <div class="exercise-list">
+        <div class="ex-item active" data-ex="squat"          onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M9 6h6M10 6l-2 8h8l-2-8"/><path d="M8 14l-2 6M16 14l2 6"/></svg></span><div class="ex-info"><b>Squat</b><small>Legs · Glutes</small></div><span class="ex-rep" id="sb_squat">0</span></div>
+        <div class="ex-item"        data-ex="pushup"         onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="16" cy="4" r="2"/><path d="M2 14h20M8 14l4-6 4 6"/></svg></span><div class="ex-info"><b>Push-up</b><small>Chest · Triceps</small></div><span class="ex-rep" id="sb_pushup">0</span></div>
+        <div class="ex-item"        data-ex="bicep_curl"     onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M9 7c0 4 2 6 3 6s3-2 3-6"/><path d="M8 13h8"/><path d="M10 13v5M14 13v5"/></svg></span><div class="ex-info"><b>Bicep Curl</b><small>Biceps</small></div><span class="ex-rep" id="sb_bicep_curl">0</span></div>
+        <div class="ex-item"        data-ex="lunge"          onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="8" cy="3" r="2"/><path d="M8 5v6M5 11h3M8 11l6 8M14 7l-6 4"/></svg></span><div class="ex-info"><b>Lunge</b><small>Quads · Hamstrings</small></div><span class="ex-rep" id="sb_lunge">0</span></div>
+        <div class="ex-item"        data-ex="shoulder_press" onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M8 7h8M12 7v10M8 7l-3 6M16 7l3 6"/></svg></span><div class="ex-info"><b>Shoulder Press</b><small>Shoulders</small></div><span class="ex-rep" id="sb_shoulder_press">0</span></div>
+        <div class="ex-item"        data-ex="plank"          onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="18" cy="6" r="2"/><path d="M2 14l20-4M12 14l4-6"/></svg></span><div class="ex-info"><b>Plank</b><small>Core · Stability</small></div><span class="ex-rep" id="sb_plank">0s</span></div>
+        <div class="ex-item"        data-ex="jumping_jacks"  onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M12 6v6M8 20l4-6 4 6M6 10l6 2 6-4"/></svg></span><div class="ex-info"><b>Jumping Jacks</b><small>Cardio · Full Body</small></div><span class="ex-rep" id="sb_jumping_jacks">0</span></div>
+        <div class="ex-item"        data-ex="high_knees"     onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M12 5v5M9 7l3 3M12 10l2 4-4 6M15 14l3 6"/></svg></span><div class="ex-info"><b>High Knees</b><small>Cardio · Legs</small></div><span class="ex-rep" id="sb_high_knees">0</span></div>
+        <div class="ex-item"        data-ex="arm_raises"     onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M12 6v8M4 10l8 2 8-4"/></svg></span><div class="ex-info"><b>Arm Raises</b><small>Shoulders · Upper</small></div><span class="ex-rep" id="sb_arm_raises">0</span></div>
+        <div class="ex-item"        data-ex="side_lunge"     onclick="selectExercise(this)"><span class="ex-icon ex-icon-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M12 5v7M5 12h14M5 12l-2 8M19 12l2 8M12 12v8"/></svg></span><div class="ex-info"><b>Side Lunge</b><small>Inner Thigh · Glutes</small></div><span class="ex-rep" id="sb_side_lunge">0</span></div>
+      </div>
+
+      <div class="session-card">
+        <div class="sc-row"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 2C8 6 6 10 8 14c-3-1-4-4-3-7C2 10 1 16 5 19a7 7 0 0 0 14 0c2-3 1-8-2-11-1 3-3 4-5 3 2-3 1-6 0-9z"/></svg> Streak</span><b id="streakEl">1 day</b></div>
+        <div class="sc-row"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 3h6"/></svg> Session</span><b id="sessionTimer">00:00</b></div>
+        <div class="sc-row"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 5v14M5 12l7 7 7-7"/></svg> Total Reps</span><b id="totalRepsEl">0</b></div>
+      </div>
+    </aside>
+
+    <!-- CENTER: Camera -->
+    <section class="cam-section">
+      <div class="cam-wrap" id="camWrap">
+        <video  id="webcam"         autoplay muted playsinline></video>
+        <img    id="processedFrame" alt="pose" style="display:none"/>
+
+        <div class="no-cam" id="noCam">
+          <div class="nc-inner">
+            <div class="nc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+            <p>Camera not started</p>
+            <button onclick="toggleCamera()">Enable Camera</button>
+          </div>
+        </div>
+
+        <!-- Top bar -->
+        <div class="cam-top">
+          <span class="ex-badge" id="exBadge">SQUAT</span>
+          <div class="cam-btns">
+            <button class="cbtn"         id="startBtn" onclick="toggleCamera()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start</button>
+            <button class="cbtn cbtn-stop"    id="stopBtn"  onclick="stopCamera()" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="4" y="4" width="16" height="16" rx="2"/></svg> Stop</button>
+            <button class="cbtn cbtn-danger"            onclick="resetExercise()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Reset</button>
+            <button class="cbtn cbtn-voice" id="voiceBtn" onclick="toggleVoice()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Voice</button>
+          </div>
+        </div>
+
+        <!-- Auto workout timer (starts when movement detected) -->
+        <div class="timer-pill" id="timerPill">
+          <span class="tp-dot" id="timerDot"></span>
+          <span id="workoutTimerEl">00:00</span>
+        </div>
+
+        <!-- Feedback strip -->
+        <div class="feedback-strip" id="feedbackStrip">
+          <span class="fb-icon" id="fbIcon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
+          <span id="fbText">Select an exercise and press Start</span>
+        </div>
+
+        <!-- Accuracy bar -->
+        <div class="cam-acc-bar">
+          <span class="cab-label">FORM</span>
+          <div class="cab-track"><div class="cab-fill" id="cabFill" style="width:0%"></div></div>
+          <span class="cab-pct" id="cabPct">—</span>
+        </div>
+      </div>
+      <div class="instr-strip" id="instrStrip">
+        Stand 1.5–2m from camera · Full body visible · Good lighting · Space=Start · R=Reset
+      </div>
+    </section>
+
+    <!-- RIGHT: Live stats -->
+    <aside class="panel panel-right">
+      <div class="panel-header">
+        <h2>Live Stats</h2><span class="panel-sub" id="dashEx">Squat</span>
+      </div>
+
+      <div class="rep-hero">
+        <div class="rep-num" id="repNum">0</div>
+        <div class="rep-lbl" id="repLbl">REPS</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="sAngle">—°</div><div class="stat-lbl">Joint Angle</div></div>
+        <div class="stat-box"><div class="stat-val green" id="sCorrect">0</div><div class="stat-lbl">Good Correct</div></div>
+        <div class="stat-box"><div class="stat-val red"   id="sWrong">0</div><div class="stat-lbl">Fix Fix Form</div></div>
+        <div class="stat-box"><div class="stat-val form-tag" id="sForm">—</div><div class="stat-lbl">Form Status</div></div>
+      </div>
+
+      <div class="acc-section">
+        <div class="acc-row">
+          <span class="acc-label">Form Accuracy</span>
+          <span class="acc-pct" id="accPct">0%</span>
+        </div>
+        <div class="acc-track"><div class="acc-fill" id="accFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="corrections-section">
+        <div class="corr-hdr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Live Corrections</div>
+        <div id="corrList"><div class="no-corr">Great form so far – keep going!</div></div>
+      </div>
+
+      <div class="rest-section" id="restSection" style="display:none">
+        <div class="rest-lbl">REST</div>
+        <div class="rest-num" id="restNum">30</div>
+        <button class="skip-btn" onclick="skipRest()">Skip →</button>
+      </div>
+
+      <div class="dash-actions">
+        <button class="da-btn" onclick="showSummaryModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg> Summary</button>
+        <button class="da-btn" onclick="startRest(30)">⏸ Rest 30s</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ═════════════════════ TAB: DAILY PLAN ══════════════════════════════ -->
+<div class="tab-content" id="tab-dailyplan">
+  <div class="plan-page">
+    <div class="plan-no-profile" id="planNoProfile">
+      <div class="pnp-icon"></div>
+      <h2>No Profile Found</h2>
+      <p>Set up your profile to get a personalized daily workout and nutrition plan.</p>
+      <a href="/profile" class="btn-primary" style="margin-top:16px;display:inline-block">Set Up Profile →</a>
+    </div>
+
+    <div class="plan-content" id="planContent" style="display:none">
+      <div class="plan-header-card">
+        <div class="phc-left">
+          <div class="phc-greeting" id="phcGreeting">Good morning!</div>
+          <div class="phc-name"     id="phcName">Today's Plan</div>
+          <div class="phc-goal"     id="phcGoal">—</div>
+        </div>
+        <div class="phc-right">
+          <div class="phc-stat"><span id="phcExCount">—</span><small>Exercises</small></div>
+          <div class="phc-stat"><span id="phcTotalSets">—</span><small>Total Sets</small></div>
+          <div class="phc-stat"><span id="phcDuration">—</span><small>Duration</small></div>
+        </div>
+      </div>
+
+      <div class="plan-body">
+        <div class="plan-col">
+          <div class="plan-section-card">
+            <div class="psc-header warmup-hdr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 2C8 6 6 10 8 14c-3-1-4-4-3-7C2 10 1 16 5 19a7 7 0 0 0 14 0c2-3 1-8-2-11-1 3-3 4-5 3 2-3 1-6 0-9z"/></svg> Warm-Up</div>
+            <div id="warmupList"  class="plan-ex-list"></div>
+          </div>
+          <div class="plan-section-card">
+            <div class="psc-header workout-hdr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M6 5v14M18 5v14M2 9h4M18 9h4M2 15h4M18 15h4"/></svg> Main Workout</div>
+            <div id="workoutList" class="plan-ex-list"></div>
+          </div>
+          <div class="plan-section-card">
+            <div class="psc-header cooldown-hdr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg> Cool Down</div>
+            <div id="cooldownList" class="plan-ex-list"></div>
+          </div>
+        </div>
+
+        <div class="plan-col">
+          <div class="plan-section-card">
+            <div class="psc-header nutrition-hdr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg> Daily Protein Target</div>
+            <div class="protein-display">
+              <div class="prot-big"  id="planProtRange">—</div>
+              <div class="prot-note" id="planProtNote">per day</div>
+            </div>
+            <div class="prot-bar-wrap"><div class="prot-bar-fill" style="width:65%"></div></div>
+          </div>
+          <div class="plan-section-card">
+            <div class="psc-header meal-hdr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6h4l1-1z"/></svg> Today's Meal Plan</div>
+            <div id="planMealList" class="meal-plan-list"></div>
+          </div>
+          <div class="plan-section-card">
+            <div class="psc-header food-hdr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72M10.48 14.93c1.27-2.68 4.07-3.77 5.86-5.72"/></svg> Best Protein Foods</div>
+            <div id="planFoodGrid" class="food-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════ TAB: DASHBOARD ═══════════════════════════════ -->
+<div class="tab-content" id="tab-dashboard">
+  <div class="dashboard-page v2">
+
+    <!-- Top KPI bar -->
+    <div class="kpi-bar">
+      <div class="kpi-card" id="kpi-workouts">
+        <div class="kpi-icon">🏋</div>
+        <div class="kpi-val" id="dashWorkouts">0</div>
+        <div class="kpi-lbl">Workouts Done</div>
+        <div class="kpi-trend">↑ Today</div>
+      </div>
+      <div class="kpi-card" id="kpi-reps">
+        <div class="kpi-icon"></div>
+        <div class="kpi-val" id="dashTotalReps">0</div>
+        <div class="kpi-lbl">Total Reps</div>
+        <div class="kpi-trend">All time</div>
+      </div>
+      <div class="kpi-card" id="kpi-accuracy">
+        <div class="kpi-icon"></div>
+        <div class="kpi-val" id="dashAccuracy">0%</div>
+        <div class="kpi-lbl">Form Accuracy</div>
+        <div class="kpi-trend">Session avg</div>
+      </div>
+      <div class="kpi-card" id="kpi-streak">
+        <div class="kpi-icon"></div>
+        <div class="kpi-val" id="dashStreak">1</div>
+        <div class="kpi-lbl">Day Streak</div>
+        <div class="kpi-trend">Keep it up!</div>
+      </div>
+      <div class="kpi-card" id="kpi-calories">
+        <div class="kpi-icon"></div>
+        <div class="kpi-val" id="dashCalories">0</div>
+        <div class="kpi-lbl">Est. Calories</div>
+        <div class="kpi-trend">This session</div>
+      </div>
+      <div class="kpi-card" id="kpi-time">
+        <div class="kpi-icon">⏱</div>
+        <div class="kpi-val" id="dashActiveTime">0m</div>
+        <div class="kpi-lbl">Active Time</div>
+        <div class="kpi-trend">Today</div>
+      </div>
+    </div>
+
+    <!-- Main dashboard body -->
+    <div class="dash-body-v2">
+
+      <!-- Left column -->
+      <div class="dash-col-main">
+
+        <!-- Exercise breakdown with mini bars -->
+        <div class="dash-panel">
+          <div class="dash-panel-hdr">
+            <h3>Exercise Breakdown</h3>
+            <span class="dash-panel-sub">This session</span>
+          </div>
+          <div id="dashExerciseList">
+            <div class="dash-empty-v2">
+              <div class="dev2-icon">🏃</div>
+              <p>Start a workout to see your exercise breakdown here.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly activity heatmap (visual) -->
+        <div class="dash-panel">
+          <div class="dash-panel-hdr">
+            <h3>Weekly Activity</h3>
+            <span class="dash-panel-sub">Last 7 days</span>
+          </div>
+          <div class="weekly-heatmap" id="weeklyHeatmap">
+            <div class="heatmap-row" id="heatmapRow"></div>
+            <div class="heatmap-legend">
+              <span>Less</span>
+              <div class="hm-swatch hm-0"></div>
+              <div class="hm-swatch hm-1"></div>
+              <div class="hm-swatch hm-2"></div>
+              <div class="hm-swatch hm-3"></div>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile summary -->
+        <div class="dash-panel" id="dashProfileCard" style="display:none">
+          <div class="dash-panel-hdr">
+            <h3>Profile Summary</h3>
+          </div>
+          <div id="dashProfileSummary"></div>
+        </div>
+
+      </div>
+
+      <!-- Right column -->
+      <div class="dash-col-side">
+
+        <!-- Achievements -->
+        <div class="dash-panel">
+          <div class="dash-panel-hdr">
+            <h3>Achievements</h3>
+            <span class="dash-panel-sub" id="achCount">0 / 6 unlocked</span>
+          </div>
+          <div class="achievements-grid-v2">
+            <div class="ach-v2 locked" id="ach-10">
+              <div class="ach-v2-icon">🔟</div>
+              <div class="ach-v2-lbl">10 Reps</div>
+              <div class="ach-v2-desc">Complete 10 reps</div>
+            </div>
+            <div class="ach-v2 locked" id="ach-50">
+              <div class="ach-v2-icon">💪</div>
+              <div class="ach-v2-lbl">50 Reps</div>
+              <div class="ach-v2-desc">Complete 50 reps</div>
+            </div>
+            <div class="ach-v2 locked" id="ach-100">
+              <div class="ach-v2-icon">💯</div>
+              <div class="ach-v2-lbl">Century</div>
+              <div class="ach-v2-desc">Complete 100 reps</div>
+            </div>
+            <div class="ach-v2 locked" id="ach-streak">
+              <div class="ach-v2-icon"></div>
+              <div class="ach-v2-lbl">On Fire</div>
+              <div class="ach-v2-desc">3-day streak</div>
+            </div>
+            <div class="ach-v2 locked" id="ach-acc">
+              <div class="ach-v2-icon"></div>
+              <div class="ach-v2-lbl">Sharp Form</div>
+              <div class="ach-v2-desc">80% accuracy</div>
+            </div>
+            <div class="ach-v2 locked" id="ach-plank">
+              <div class="ach-v2-icon">🧘</div>
+              <div class="ach-v2-lbl">Iron Core</div>
+              <div class="ach-v2-desc">30s plank hold</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session timeline -->
+        <div class="dash-panel">
+          <div class="dash-panel-hdr">
+            <h3>Session Timeline</h3>
+          </div>
+          <div class="timeline-v2" id="dashTimeline">
+            <div class="dash-empty-v2">
+              <div class="dev2-icon"></div>
+              <p>No activity yet. Start your workout!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motivational quote -->
+        <div class="dash-panel dash-quote-panel">
+          <div class="quote-icon"></div>
+          <div class="quote-text" id="dashQuote">"The only bad workout is the one that didn't happen."</div>
+          <div class="quote-author">— Fitnova AI</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ TAB: ABOUT ════════════════════════════════════════ -->
+<div class="tab-content" id="tab-about">
+  <div class="about-page about-v2">
+
+    <!-- ── SECTION 1: ABOUT THE PROJECT ─────────────────────────────── -->
+    <section class="about-section" id="aboutProject">
+      <div class="about-section-label">Section 01</div>
+      <h2 class="about-section-title">About the Project</h2>
+      <div class="about-project-grid">
+        <div class="apg-main">
+          <div class="apg-logo-row">
+            <img src="{{ url_for('static', filename='fitnova_logo.png') }}" alt="Fitnova AI" class="about-logo" id="aboutLogo"/>
+            <div>
+              <h1 class="about-main-title">Fitnova AI</h1>
+              <p class="about-main-sub">AI Powered. You Empowered.</p>
+            </div>
+          </div>
+          <p class="apg-desc">Fitnova AI is a real-time AI personal trainer that uses computer vision to analyze your workout form, count reps automatically, and give live coaching feedback — all from your browser webcam. No gym required. No wearables. Just you, your camera, and your goals.</p>
+          <p class="apg-desc" style="margin-top:10px">Built with Google MediaPipe pose estimation and a Flask backend, it detects 33 body landmarks per frame, calculates joint angles, classifies movement phases, and provides corrective audio/visual feedback in real-time.</p>
+
+          <div class="apg-stats">
+            <div class="apgs-item"><div class="apgs-val">10</div><div class="apgs-lbl">Exercises</div></div>
+            <div class="apgs-item"><div class="apgs-val">33</div><div class="apgs-lbl">Landmarks</div></div>
+            <div class="apgs-item"><div class="apgs-val">v4</div><div class="apgs-lbl">Version</div></div>
+            <div class="apgs-item"><div class="apgs-val">🇮🇳</div><div class="apgs-lbl">Hyderabad</div></div>
+          </div>
+        </div>
+
+        <div class="apg-right">
+          <div class="about-card" style="margin-bottom:14px">
+            <h3 class="apc-title">Key Features</h3>
+            <ul class="about-list">
+              <li><span class="al-dot">🤖</span> Real-time pose detection (MediaPipe)</li>
+              <li><span class="al-dot">📐</span> Joint angle &amp; form accuracy scoring</li>
+              <li><span class="al-dot"></span> Auto rep counting for 10 exercises</li>
+              <li><span class="al-dot"></span> Voice feedback for corrections</li>
+              <li><span class="al-dot"></span> AI-generated daily workout plans</li>
+              <li><span class="al-dot">🥗</span> Nutrition &amp; protein targets</li>
+              <li><span class="al-dot"></span> Progress dashboard &amp; streaks</li>
+              <li><span class="al-dot">🏆</span> Milestone achievements</li>
+            </ul>
+          </div>
+          <div class="about-card">
+            <h3 class="apc-title">How It Works</h3>
+            <div class="about-steps">
+              <div class="astep"><div class="astep-num">1</div><div class="astep-body"><b>Camera</b> — Browser streams webcam frames to Flask backend.</div></div>
+              <div class="astep"><div class="astep-num">2</div><div class="astep-body"><b>Pose</b> — MediaPipe detects 33 landmarks &amp; joint angles.</div></div>
+              <div class="astep"><div class="astep-num">3</div><div class="astep-body"><b>Analysis</b> — Movement phases classified, reps counted.</div></div>
+              <div class="astep"><div class="astep-num">4</div><div class="astep-body"><b>Scoring</b> — Real-time form accuracy percentage.</div></div>
+              <div class="astep"><div class="astep-num">5</div><div class="astep-body"><b>Feedback</b> — Corrections shown &amp; spoken aloud.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercises grid with instructions -->
+      <div class="about-card" style="margin-top:14px">
+        <h3 class="apc-title">Supported Exercises <span style="font-size:11px;color:var(--text3);font-weight:400">— tap any to see instructions</span></h3>
+        <div class="about-ex-grid-v2" id="exerciseCardsGrid">
+          <div class="aex-card" onclick="openExerciseModal('squat')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M9 6h6M10 6l-2 8h8l-2-8"/><path d="M8 14l-2 6M16 14l2 6"/></svg></div><div class="aex-card-name">Squat</div><div class="aex-card-muscle">Legs · Glutes</div></div>
+          <div class="aex-card" onclick="openExerciseModal('pushup')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="16" cy="4" r="2"/><path d="M2 14h20M8 14l4-6 4 6"/></svg></div><div class="aex-card-name">Push-up</div><div class="aex-card-muscle">Chest · Triceps</div></div>
+          <div class="aex-card" onclick="openExerciseModal('bicep_curl')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M9 7c0 4 2 6 3 6s3-2 3-6"/><path d="M8 13h8"/><path d="M10 13v5M14 13v5"/></svg></div><div class="aex-card-name">Bicep Curl</div><div class="aex-card-muscle">Biceps</div></div>
+          <div class="aex-card" onclick="openExerciseModal('lunge')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="8" cy="3" r="2"/><path d="M8 5v6M5 11h3M8 11l6 8M14 7l-6 4"/></svg></div><div class="aex-card-name">Lunge</div><div class="aex-card-muscle">Quads · Hamstrings</div></div>
+          <div class="aex-card" onclick="openExerciseModal('shoulder_press')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="16" cy="4" r="2"/><path d="M2 14h20M8 14l4-6 4 6"/></svg></div><div class="aex-card-name">Shoulder Press</div><div class="aex-card-muscle">Shoulders</div></div>
+          <div class="aex-card" onclick="openExerciseModal('plank')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="18" cy="6" r="2"/><path d="M2 14l20-4M12 14l4-6"/></svg></div><div class="aex-card-name">Plank</div><div class="aex-card-muscle">Core · Stability</div></div>
+          <div class="aex-card" onclick="openExerciseModal('jumping_jacks')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M12 6v6M8 20l4-6 4 6M6 10l6 2 6-4"/></svg></div><div class="aex-card-name">Jumping Jacks</div><div class="aex-card-muscle">Cardio · Full Body</div></div>
+          <div class="aex-card" onclick="openExerciseModal('high_knees')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M12 5v5M9 7l3 3M12 10l2 4-4 6M15 14l3 6"/></svg></div><div class="aex-card-name">High Knees</div><div class="aex-card-muscle">Cardio · Legs</div></div>
+          <div class="aex-card" onclick="openExerciseModal('arm_raises')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="4" r="2"/><path d="M12 6v8M4 10l8 2 8-4"/></svg></div><div class="aex-card-name">Arm Raises</div><div class="aex-card-muscle">Shoulders</div></div>
+          <div class="aex-card" onclick="openExerciseModal('side_lunge')"><div class="aex-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><circle cx="12" cy="3" r="2"/><path d="M12 5v7M5 12h14M5 12l-2 8M19 12l2 8M12 12v8"/></svg></div><div class="aex-card-name">Side Lunge</div><div class="aex-card-muscle">Inner Thigh</div></div>
+        </div>
+      </div>
+
+<!-- Exercise Instruction Modal -->
+<div id="exModal" class="ex-modal-overlay" style="display:none" onclick="if(event.target===this)closeExModal()">
+  <div class="ex-modal-card">
+    <button class="ex-modal-close" onclick="closeExModal()">✕</button>
+    <div class="ex-modal-icon" id="emIcon"></div>
+    <h2 class="ex-modal-title" id="emTitle"></h2>
+    <div class="ex-modal-muscle" id="emMuscle"></div>
+    <div class="ex-modal-steps" id="emSteps"></div>
+    <div class="ex-modal-tips" id="emTips"></div>
+    <a class="ex-modal-yt" id="emYT" href="#" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      Watch on YouTube
+    </a>
+    <button class="ex-modal-train" onclick="closeExModal();switchTab('trainer',document.querySelector('[data-tab=trainer]'))">Train This Exercise →</button>
+  </div>
+</div>
+    </section>
+
+    <!-- ── SECTION 2: MEET THE CREATOR ──────────────────────────────── -->
+    <section class="about-section creator-section" id="meetCreator">
+      <div class="about-section-label">Section 02</div>
+      <h2 class="about-section-title">Meet the Creator</h2>
+
+      <div class="creator-v2-card">
+        <!-- Left: Photo -->
+        <div class="creator-v2-left">
+          <div class="creator-photo-wrap">
+            <img src="{{ url_for('static', filename='manoj_photo.jpg') }}" alt="Vanga Manoj" class="creator-photo"/>
+            <div class="creator-photo-glow"></div>
+          </div>
+          <div class="creator-v2-name">Vanga Manoj</div>
+          <div class="creator-v2-role">Full Stack Web Developer</div>
+
+          <!-- Social links -->
+          <div class="creator-socials">
+            <a href="https://linkedin.com/in/vanga-manoj" target="_blank" rel="noopener" class="cs-link cs-linkedin">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+            <a href="https://github.com/VANGAMANOJ" target="_blank" rel="noopener" class="cs-link cs-github">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
+            </a>
+            <a href="mailto:vangamanoj936@gmail.com" class="cs-link cs-email">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+              Email
+            </a>
+          </div>
+
+          </div>
+
+        <!-- Right: Bio -->
+        <div class="creator-v2-right">
+          <div class="creator-quote">"Building AI that actually works in real life."</div>
+          <p class="creator-bio">Hi, I'm <strong>Vanga Manoj</strong>, the creator of Fitnova AI. I'm a Full Stack Web Developer focused on building practical AI solutions that solve real problems.</p>
+          <p class="creator-bio">I developed Fitnova AI after noticing that most people struggle to stay consistent with workouts — not because they lack effort, but because they lack proper guidance. Traditional fitness plans are often rigid and don't adapt to individual needs, which leads to poor results.</p>
+          <p class="creator-bio">To solve this, I built Fitnova AI as a smart, flexible workout system that adjusts based on the user. It focuses on <strong>simplicity, personalization, and real-world usability</strong> instead of complicated plans.</p>
+          <p class="creator-bio">By combining AI with fitness, my goal is to make workouts more effective and accessible. Fitnova AI reflects my approach of building systems that are <strong>practical, scalable, and actually useful</strong> in daily life.</p>
+
+          <div class="creator-contact-row">
+            <a href="mailto:vangamanoj936@gmail.com" class="creator-contact-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg> vangamanoj936@gmail.com</a>
+            <a href="https://linkedin.com/in/vanga-manoj" target="_blank" class="creator-contact-btn creator-contact-li">🔗 linkedin.com/in/vanga-manoj</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3: WHAT USERS SAY ─────────────────────────────────── -->
+    <section class="about-section" id="userSays">
+      <div class="about-section-label">Section 03</div>
+      <h2 class="about-section-title">What Users Say</h2>
+      <p class="about-section-sub">Real feedback from the Fitnova AI community</p>
+      <div class="mini-reviews-grid" id="aboutMiniReviews">
+        <div class="mr-loading">Loading reviews…</div>
+      </div>
+      <div style="text-align:center;margin-top:20px">
+        <button class="reviews-write-btn" onclick="openFeedback()"> Write a Review</button>
+        <button class="reviews-write-btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);margin-left:10px" onclick="switchTab('reviews',document.querySelector('[data-tab=reviews]'))">See All Reviews →</button>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4: FAQ ─────────────────────────────────────────────── -->
+    <section class="about-section" id="faqSection">
+      <div class="about-section-label">Section 04</div>
+      <h2 class="about-section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Do I need any special equipment?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">No! Just your smartphone or laptop with a working camera. Fitnova AI uses your device's webcam to detect your body and count reps — no gym, no wearables, no extra hardware needed.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Is my camera data stored anywhere?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">No. Your camera feed is processed in real-time on the server and immediately discarded. We never store, record, or share your video data. Your privacy is fully protected.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Which exercises does Fitnova AI support?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Currently 10 exercises: Squat, Push-up, Bicep Curl, Lunge, Shoulder Press, Plank, Jumping Jacks, High Knees, Arm Raises, and Side Lunge. More are being added in future updates.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How accurate is the rep counting?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Rep counting accuracy is above 90% under good lighting conditions. The AI uses joint angle thresholds to detect full movement cycles, so partial reps are not counted — ensuring quality over quantity.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Does it work on mobile phones?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Yes! Fitnova AI is fully mobile-responsive. For best results on mobile, prop your phone at a distance so your full body is visible in frame. Use Chrome or Safari for best camera support.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Is Fitnova AI free to use?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Yes, Fitnova AI is completely free. No subscriptions, no hidden fees. Just open the app and start training.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What if the lighting is bad?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Good lighting significantly improves accuracy. Try to exercise in a well-lit room, face a light source, and avoid exercising in front of a bright window. Natural daylight works best.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How do I get support?</span><span class="faq-icon">+</span></div>
+          <div class="faq-a">Email the creator directly at vangamanoj936@gmail.com or reach out on Instagram @fitnova_ai18. You can also submit feedback using the Review feature inside the app.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ═════════════════ SUMMARY MODAL ════════════════════════════════════ -->
+<div class="modal-bg" id="summaryModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card">
+    <div class="modal-hdr"><h3>Workout Summary</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+    <div id="modalBody" class="modal-body">Loading…</div>
+    <div class="modal-ftr"><button class="btn-primary" onclick="closeModal()">Continue Training</button></div>
+  </div>
+</div>
+
+<!-- ═════════════════ INJURY TOAST ══════════════════════════════════════ -->
+<div class="injury-toast" id="injuryToast" style="display:none">
+  <span>🚨</span><span id="injuryMsg">Alert</span>
+  <button onclick="this.parentElement.style.display='none'">✕</button>
+</div>
+
+
+
+<!-- ═════════════════ COMMUNITY REVIEWS SECTION ═════════════════════════ -->
+<section class="page-reviews-section">
+  <div class="prs-inner">
+    <div class="prs-header">
+      <div>
+        <div class="prs-label">Community</div>
+        <h2 class="prs-title">What Users Say</h2>
+        <p class="prs-sub">Real feedback from Fitnova AI users</p>
+      </div>
+      <div class="prs-avg-wrap" id="prsAvgWrap" style="display:none">
+        <div class="prs-avg-num" id="prsAvgNum">—</div>
+        <div class="prs-avg-stars" id="prsAvgStars"></div>
+        <div class="prs-avg-count" id="prsAvgCount"></div>
+      </div>
+      <button class="reviews-write-btn" onclick="openFeedback()">Write a Review</button>
+    </div>
+    <div class="prs-cards" id="prsCards">
+      <div class="prs-loading">Loading reviews...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════ FOOTER ════════════════════════════════════════════ -->
+<footer class="site-footer always-black">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="{{ url_for('static', filename='fitnova_logo.png') }}" alt="Fitnova AI" class="footer-logo" id="footerLogo"/>
+      <p class="footer-tagline">AI Powered. You Empowered.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <div class="footer-col-title">Features</div>
+        <a onclick="switchTab('trainer', document.querySelector('[data-tab=trainer]'))">Live Trainer</a>
+        <a onclick="switchTab('dailyplan', document.querySelector('[data-tab=dailyplan]'))">Daily Plan</a>
+        <a onclick="switchTab('dashboard', document.querySelector('[data-tab=dashboard]'))">Dashboard</a>
+        <a href="/profile">Profile</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Exercises</div>
+        <a>Squat · Push-up</a>
+        <a>Bicep Curl · Lunge</a>
+        <a>Plank · High Knees</a>
+        <a>Jumping Jacks</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">About</div>
+        <a onclick="switchTab('about', document.querySelector('[data-tab=about]'))">About Fitnova AI</a>
+        <a onclick="switchTab('about', document.querySelector('[data-tab=about]'))">Meet the Creator</a>
+        <a href="mailto:vangamanoj936@gmail.com">Support</a>
+        <a href="mailto:vangamanoj936@gmail.com">Contact</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Connect</div>
+        <a href="https://www.instagram.com/fitnova_ai18?igsh=czBidTBoMGVxdXAw" target="_blank" rel="noopener">📸 @fitnova_ai18</a>
+        <a href="mailto:vangamanoj936@gmail.com" class="footer-email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg> vangamanoj936@gmail.com</a>
+        <a href="#" onclick="openFeedback();return false;"> Leave a Review</a>
+        
+        
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span id="hiddenAdminTrigger" title="">© 2026 Fitnova AI · Built by Vanga Manoj · Hyderabad, India 🇮🇳</span>
+    <span class="footer-bottom-right">MIT License · All rights reserved.</span>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!-- ═══════════════ FEEDBACK MODAL ════════════════════════════════════ -->
+<div id="feedbackOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:8000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
+  <div class="fb-modal" id="fbModal">
+    <button class="fb-close" onclick="closeFeedback()">✕</button>
+    <div class="fb-modal-icon"></div>
+    <h2 class="fb-modal-title">Rate Fitnova AI</h2>
+    <p class="fb-modal-sub">Your feedback helps improve the experience!</p>
+    <div class="fb-stars-row" id="fbStars">
+      <span class="fb-star" data-v="1" onclick="setRating(1)">★</span>
+      <span class="fb-star" data-v="2" onclick="setRating(2)">★</span>
+      <span class="fb-star" data-v="3" onclick="setRating(3)">★</span>
+      <span class="fb-star" data-v="4" onclick="setRating(4)">★</span>
+      <span class="fb-star" data-v="5" onclick="setRating(5)">★</span>
+    </div>
+    <input id="fbName" type="text" placeholder="Your name (optional)" maxlength="60"/>
+    <textarea id="fbMsg" placeholder="Share your experience with Fitnova AI..." rows="4" maxlength="500"></textarea>
+    <button class="fb-submit-btn" onclick="submitFeedback()">Submit Review</button>
+    <div id="fbSuccess" class="fb-success" style="display:none">🎉 Thank you for your review!</div>
+    <div id="fbError" class="fb-error" style="display:none">Something went wrong. Try again.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ ANNOUNCEMENT BANNER ══════════════════════════════ -->
+<div id="annBanner" style="display:none" class="ann-banner">
+  <span id="annText"></span>
+  <button onclick="document.getElementById('annBanner').style.display='none'">✕</button>
+</div>
+
+
+<!-- ═══════════════ HIDDEN ADMIN PANEL (in-page) ══════════════════════ -->
+<div id="adminOverlay" class="admin-overlay">
+  <div class="admin-modal" id="adminModal">
+
+    <!-- Login Screen -->
+    <div id="adminLoginScreen">
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+      <div class="admin-logo"></div>
+      <h2 class="admin-title">Admin Access</h2>
+      <p class="admin-sub">Restricted to authorized personnel only</p>
+      <div id="adminLoginError" class="admin-error" style="display:none">Invalid credentials</div>
+      <input id="adminUser" type="text" placeholder="Username" autocomplete="off" class="admin-input"/>
+      <input id="adminPass" type="password" placeholder="Password" autocomplete="new-password" class="admin-input"/>
+      <button class="admin-btn" onclick="adminLogin()">Access Dashboard</button>
+      <div class="admin-hint">Hold © text for 3s to open · Triple-click to open</div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="adminDashScreen" style="display:none">
+      <div class="admin-dash-header">
+        <h2> Fitnova AI Admin</h2>
+        <button class="admin-close-dash" onclick="adminLogout()">Sign Out</button>
+      </div>
+
+      <!-- KPIs -->
+      <div class="admin-kpi-row" id="adminKpis">
+        <div class="admin-kpi"><div class="akv" id="akTotal">—</div><div class="akl">Total Visits</div></div>
+        <div class="admin-kpi"><div class="akv" id="akToday">—</div><div class="akl">Today</div></div>
+        <div class="admin-kpi"><div class="akv" id="akWeek">—</div><div class="akl">This Week</div></div>
+        <div class="admin-kpi"><div class="akv" id="akUniq">—</div><div class="akl">Unique IPs</div></div>
+        <div class="admin-kpi"><div class="akv" id="akFb">—</div><div class="akl">Reviews</div></div>
+        <div class="admin-kpi"><div class="akv" id="akRating" style="color:#ffc107">—</div><div class="akl">Avg Rating</div></div>
+      </div>
+
+      <!-- Chart -->
+      <div class="admin-section">
+        <div class="admin-section-title">Daily Traffic (14 days)</div>
+        <canvas id="adminChart" style="max-height:160px"></canvas>
+      </div>
+
+      <!-- Announcement -->
+      <div class="admin-section">
+        <div class="admin-section-title">Announcement Banner</div>
+        <textarea id="adminAnn" placeholder="Type an announcement... (leave empty to hide)" class="admin-textarea"></textarea>
+        <button class="admin-btn-sm" onclick="saveAnnouncement()">Save</button>
+        <span id="adminAnnOk" style="color:#00c87a;font-size:12px;margin-left:8px;display:none"> Saved!</span>
+      </div>
+
+      <!-- Reviews -->
+      <div class="admin-section">
+        <div class="admin-section-title">User Reviews</div>
+        <div id="adminReviews" class="admin-reviews-list"></div>
+      </div>
+
+      <!-- Recent Visits -->
+      <div class="admin-section">
+        <div class="admin-section-title">Recent Visits</div>
+        <div id="adminVisits" class="admin-visits-list"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
